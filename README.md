@@ -1,2 +1,9 @@
 # openai-python
-A Python implementation for interacting with OpenAI API. This repository will contain Python scripts and classes for working with OpenAI models like GPT, Codex, and DALL·E, along with examples of how to integrate them into Python-based projects.
+
+This repository demonstrates how to use the OpenAI API with Python. It includes scripts and examples for generating text, images, and performing other tasks using models like GPT-3, GPT-4, and DALL·E.
+
+## Prerequisites:
+- Python 3.6 or higher
+- Install the required libraries:
+  ```bash
+  pip install openai
