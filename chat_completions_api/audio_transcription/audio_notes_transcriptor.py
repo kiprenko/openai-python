@@ -2,6 +2,15 @@ import sys
 from openai import OpenAI
 from dotenv import load_dotenv
 
+STRUCTURE_SYSTEM_PROMPT = "Your task is to structure and organise " \
+                 "transcriptions of audio notes. " \
+                 "You accept a transcription and " \
+                 "provide it structured in the same language. " \
+                 "Do not use Markdown, emoji or any other text formatting. " \
+                 "Make the text easy to read, get rid of any vermin words. " \
+                 "The result must look like " \
+                 "a title and a paragraph with the summary " \
+                 "of the given audio note transcription."
 
 TRANSCRIPTION_MODEL = "gpt-4o-transcribe"
 STRUCTURE_MODEL = "gpt-4.1"
@@ -17,10 +26,15 @@ def main():
     audio_file = open(path_to_audio_file, "rb")
     client = OpenAI()
 
-    transcription = transcript(client, audio_file)
-    structured_transcription = structure(client, transcription.text)
+    transcription = transcript(client, audio_file).text
+    print("Your audio transcription:\n\n" + transcription + "\n")
+    to_structure = input("Do you want to structure it? (yes/no): ")
+    if to_structure != "yes" or to_structure != "y":
+        print("Bye!")
+        sys.exit(0)
+    structured_transcript = structure(client, transcription)
 
-    print(structured_transcription)
+    print("Your structured audio transcription:\n\n" + structured_transcript)
 
 
 def transcript(client, audio_file):
@@ -29,24 +43,20 @@ def transcript(client, audio_file):
         file=audio_file
     )
 
+
 def structure(client, transcription):
     return client.chat.completions.create(
-    model=STRUCTURE_MODEL,
-    messages=[
-        {
-            "role": "system",
-            "content": "Your task is to structure and organise transcriptions of audio notes. "
-                       "You accept a transcription and provide the structured version of it in the same language. "
-                       "Do not use Markdown, emoji or any other text formatting. "
-                       "Make the text laconic and easy to read, get rid of any vermin words. "
-                       "The result must look like "
-                       "a title and a paragraph with the summary of the given audio note transcription."
-        },
-        {
-            "role": "user",
-            "content": transcription
-        }
-    ]
+        model=STRUCTURE_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": STRUCTURE_SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": transcription
+            }
+        ]
     ).choices[0].message.content
 
 
