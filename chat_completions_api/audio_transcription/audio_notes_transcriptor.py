@@ -29,7 +29,7 @@ def main():
     transcription = transcript(client, audio_file).text
     print("Your audio transcription:\n\n" + transcription + "\n")
     to_structure = input("Do you want to structure it? (yes/no): ")
-    if to_structure != "yes" or to_structure != "y":
+    if to_structure != "yes" and to_structure != "y":
         print("Bye!")
         sys.exit(0)
     structured_transcript = structure(client, transcription)
